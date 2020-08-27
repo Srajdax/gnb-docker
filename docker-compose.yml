@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  db:
+    container_name: mongodb
+    image: mongo
+    command: mongod --port 27017
+    expose:
+      - "27017"
+    volumes:
+      - dbdata:/data/db
+    networks:
+      privnet:
+        aliases:
+          - db
+
+  free5gc-gnb:
+    container_name: gnb
+    build:
+      context: ./nf_gnb
+      args:
+        DEBUG_TOOLS: "false"
+    command: ./gnb -gnbcfg ../config/gnbcfg.conf
+    expose:
+      - "32000"
+    volumes:
+      - ./config/gnbcfg.conf:/free5gc/config/gnbcfg.conf
+      - ./config/free5GC.conf:/free5gc/config/free5GC.conf
+    environment:
+      GIN_MODE: release
+    networks:
+      privnet:
+        aliases:
+          - gnb
+
+networks:
+  privnet:
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.100.200.0/24
+
+volumes:
+  dbdata:

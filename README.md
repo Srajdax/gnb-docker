@@ -1,2 +1,5 @@
-# gnb-docker
-Docker version of the 5G Software gNB
+# Docker compose version of the 5G Software gNB
+
+## Usage
+
+
